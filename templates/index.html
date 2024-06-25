@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Calculator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .pane {
+            flex: 1;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            min-width: 300px;
+        }
+        .pane h3 {
+            margin-top: 0;
+        }
+        .pane label {
+            display: block;
+            margin-top: 10px;
+            text-align: left;
+        }
+        .pane input, .pane select {
+            width: calc(100% - 20px);
+            padding: 5px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .pane .radio-group {
+            display: flex;
+            align-items: left;
+            justify-content: flex-start;
+        }
+        .pane .radio-group label {
+            margin-left: 2px; /* Reduced space between radio button and text */
+            margin-right: 10px;
+        }
+        .pane .radio-group input[type="radio"] {
+            margin-right: 2px; /* Reduced space between radio button and text */
+        }
+
+        .dependent-fields, .multiple-jobs-fields {
+            display: none;
+        }
+        .dollar-input {
+            display: flex;
+            align-items: center;
+        }
+        .dollar-input input {
+            width: calc(100% - 20px - 1.5em);
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Payroll Calculator</h1>
+    </header>
+    <main>
+        <form id="payroll-form">
+            <div class="container">
+                <!-- Federal Taxes Pane -->
+                <div class="pane">
+                    <h3>Federal Taxes</h3>
+                    <label for="filingStatus">Filing Status:</label>
+                    <select id="filingStatus" name="filingStatus" required>
+                        <option value="single">Single or Married Filing Separately</option>
+                        <option value="married">Married Filing Jointly</option>
+                        <option value="head_of_household">Head of Household</option>
+                    </select>
+                    <label>Claiming Dependents?</label>
+                    <div class="radio-group">
+                        <input type="radio" id="dependents_yes" name="dependents" value="yes" onclick="toggleDependentFields()">
+                        <label for="dependents_yes">Yes</label>
+                        <input type="radio" id="dependents_no" name="dependents" value="no" checked onclick="toggleDependentFields()">
+                        <label for="dependents_no">No</label>
+                    </div>
+                    <div class="dependent-fields">
+                        <label for="qualifyingChildren">Number of qualifying children under 17:</label>
+                        <input type="number" id="qualifyingChildren" name="qualifyingChildren" value="0">
+                        <label for="otherDependents">Number of other dependents:</label>
+                        <input type="number" id="otherDependents" name="otherDependents" value="0">
+                    </div>
+
+                    <label>Multiple Jobs or Spouse Works:</label>
+                    <div class="radio-group">
+                        <input type="radio" id="multipleJobs_yes" name="multipleJobs" value="yes" onclick="toggleMultipleJobsFields()">
+                        <label for="multipleJobs_yes">Yes</label>
+                        <input type="radio" id="multipleJobs_no" name="multipleJobs" value="no" checked onclick="toggleMultipleJobsFields()">
+                        <label for="multipleJobs_no">No</label>
+                    </div>
+                    <div class="multiple-jobs-fields">
+                        <label for="twoJobsCheckbox">2c check the box (only 2 jobs total):</label>
+                        <input type="checkbox" id="twoJobsCheckbox" name="twoJobsCheckbox">
+                    </div>
+
+                    <label for="otherIncome">Other Income:</label>
+                    <div class="dollar-input">
+                        <span>$</span>
+                        <input type="number" id="otherIncome" name="otherIncome" step="0.01" value="0.00">
+                    </div>
+
+                    <label for="deductions">Deductions:</label>
+                    <div class="dollar-input">
+                        <span>$</span>
+                        <input type="number" id="deductions" name="deductions" step="0.01" value="0.00">
+                    </div>
+
+                    <label for="extraWithholding">Extra Withholding Each Pay Period:</label>
+                    <div class="dollar-input">
+                        <span>$</span>
+                        <input type="number" id="extraWithholding" name="extraWithholding" step="0.01" value="0.00">
+                    </div>
+
+                    <label for="otherTaxCredits">Other Tax Credits:</label>
+                    <div class="dollar-input">
+                        <span>$</span>
+                        <input type="number" id="otherTaxCredits" name="otherTaxCredits" step="0.01" value="0.00">
+                    </div>
+                </div>
+
+                <!-- State Taxes Pane -->
+                <div class="pane">
+                    <h3>State Taxes</h3>
+                    <label for="state">State:</label>
+                    <select id="state" name="state" required>
+                        {% for state in states %}
+                        <option value="{{ state }}">{{ state }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Wage Info Pane -->
+                <div class="pane">
+                    <h3>Wage Info</h3>
+                    <label for="paymentType">Payment Type:</label>
+                    <select id="paymentType" name="paymentType" required onchange="updateForm()">
+                        <option value="salary">Salary</option>
+                        <option value="hourly">Hourly</option>
+                    </select>
+
+                    <div id="salary-fields">
+                        <label for="salary">Salary:</label>
+                        <input type="number" id="salary" name="salary" required>
+
+                        <label for="grossPayMethod">Gross Pay Method:</label>
+                        <select id="grossPayMethod" name="grossPayMethod" required>
+                            <option value="year">Per Year</option>
+                            <option value="period">Per Pay Period</option>
+                        </select>
+                    </div>
+
+                    <div id="hourly-fields" style="display: none;">
+                        <label for="hours">Hours Worked:</label>
+                        <input type="number" id="hours" name="hours" required>
+
+                        <label for="hourlyRate">Hourly Rate:</label>
+                        <input type="number" id="hourlyRate" name="hourlyRate" required>
+                    </div>
+
+                    <label for="payFrequency">Pay Frequency:</label>
+                    <select id="payFrequency" name="payFrequency" required>
+                        <option value="weekly">Weekly</option>
+                        <option value="bi-weekly">Bi-Weekly</option>
+                        <option value="semi-monthly">Semi-Monthly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" onclick="calculatePayroll()">Calculate</button>
+        </form>
+        <div id="results"></div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Your Company</p>
+    </footer>
+    <script>
+        function toggleDependentFields() {
+            const dependentFields = document.querySelector('.dependent-fields');
+            if (document.getElementById('dependents_yes').checked) {
+                dependentFields.style.display = 'block';
+            } else {
+                dependentFields.style.display = 'none';
+            }
+        }
+
+        function toggleMultipleJobsFields() {
+            const multipleJobsFields = document.querySelector('.multiple-jobs-fields');
+            if (document.getElementById('multipleJobs_yes').checked) {
+                multipleJobsFields.style.display = 'block';
+            } else {
+                multipleJobsFields.style.display = 'none';
+            }
+        }
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
