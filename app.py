@@ -120,10 +120,7 @@ def calculate_taxes():
         social_security_tax = min(wages, SOCIAL_SECURITY_WAGE_BASE) * SOCIAL_SECURITY_RATE
 
         # Update Medicare tax calculation with additional Medicare tax
-        if multiple_jobs == 'yes' and dependents.get('two_jobs_checkbox') and filing_status == 'married':
-            additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
-        else:
-            additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
+        additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
 
         if wages > additional_medicare_threshold:
             medicare_tax = (wages * MEDICARE_RATE) + ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
