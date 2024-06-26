@@ -13,6 +13,17 @@ FEDERAL_STANDARD_DEDUCTIONS = {
     "head_of_household": 21900
 }
 
+# Maximum wage base for Social Security tax
+SOCIAL_SECURITY_WAGE_BASE = 168600
+
+# Additional Medicare tax rate and thresholds
+ADDITIONAL_MEDICARE_TAX_RATE = 0.009
+ADDITIONAL_MEDICARE_TAX_THRESHOLDS = {
+    "single": 200000,
+    "married": 250000,
+    "head_of_household": 200000,
+}
+
 # Federal tax brackets by income and filing status
 FEDERAL_TAX_BRACKETS = {
     "single": [

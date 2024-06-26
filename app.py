@@ -9,7 +9,10 @@ from tax_tables import (
     FUTA_RATE,
     FUTA_WAGE_BASE,
     STATES,
-    SUTA_RATES
+    SUTA_RATES,
+    SOCIAL_SECURITY_WAGE_BASE,
+    ADDITIONAL_MEDICARE_TAX_RATE,
+    ADDITIONAL_MEDICARE_TAX_THRESHOLDS
 )
 
 app = Flask(__name__)
@@ -113,8 +116,19 @@ def calculate_taxes():
         federal_income_tax = calculate_federal_income_tax(wages, filing_status, dependents, multiple_jobs, other_income, deductions, extra_withholding, other_tax_credits)
         state_income_tax = calculate_state_income_tax(wages, state, filing_status)
         
-        social_security_tax = wages * SOCIAL_SECURITY_RATE
-        medicare_tax = wages * MEDICARE_RATE
+        # Update Social Security tax calculation
+        social_security_tax = min(wages, SOCIAL_SECURITY_WAGE_BASE) * SOCIAL_SECURITY_RATE
+
+        # Update Medicare tax calculation with additional Medicare tax
+        if multiple_jobs == 'yes' and dependents.get('two_jobs_checkbox') and filing_status == 'married':
+            additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status] / 2
+        else:
+            additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
+
+        if wages > additional_medicare_threshold:
+            medicare_tax = (wages * MEDICARE_RATE) + ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
+        else:
+            medicare_tax = wages * MEDICARE_RATE
         
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
