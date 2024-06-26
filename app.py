@@ -121,7 +121,7 @@ def calculate_taxes():
 
         # Update Medicare tax calculation with additional Medicare tax
         if multiple_jobs == 'yes' and dependents.get('two_jobs_checkbox') and filing_status == 'married':
-            additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status] / 2
+            additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
         else:
             additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
 
