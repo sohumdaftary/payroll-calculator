@@ -46,7 +46,7 @@ def calculate_state_income_tax(wages, state, filing_status):
             break
     return state_income_tax
 
-def calculate_federal_income_tax(wages, filing_status, dependents, multiple_jobs, other_income, deductions, extra_withholding, other_tax_credits, employee_exemptions):
+def calculate_federal_income_tax(wages, filing_status, dependents, multiple_jobs, other_income, deductions, extra_withholding, other_tax_credits):
     # Map "Single or Married Filing Separately" to "single"
     if filing_status == "single":
         filing_status = "single"
