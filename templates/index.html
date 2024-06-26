@@ -67,6 +67,18 @@
     <main>
         <form id="payroll-form">
             <div class="container">
+                <!-- Employee Exemptions Pane -->
+                <div class="pane">
+                    <h3>Employee Exemptions</h3>
+                    <label for="employeeExemptions">Special Employee Features:</label>
+                    <select id="employeeExemptions" name="employeeExemptions">
+                        <option value="none" selected>None</option>
+                        <option value="spouse">Your (employer's) spouse</option>
+                        <option value="child">Your child under the age of 21</option>
+                        <option value="parent">Your parent</option>
+                        <option value="under_18">Under the age of 18</option>
+                    </select>
+                </div>
                 <!-- Federal Taxes Pane -->
                 <div class="pane">
                     <h3>Federal Taxes</h3>

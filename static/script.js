@@ -24,6 +24,7 @@ async function calculatePayroll() {
         const deductions = document.getElementById('deductions').value || 0;
         const extraWithholding = document.getElementById('extraWithholding').value || 0;
         const otherTaxCredits = document.getElementById('otherTaxCredits').value || 0;
+        const employeeExemptions = document.getElementById('employeeExemptions').value;
 
         let wages;
         if (paymentType === 'salary') {
@@ -62,7 +63,8 @@ async function calculatePayroll() {
                 deductions: parseFloat(deductions),
                 extraWithholding: parseFloat(extraWithholding),
                 otherTaxCredits: parseFloat(otherTaxCredits), 
-                payPeriods: payPeriods
+                payPeriods: payPeriods,
+                employeeExemptions: employeeExemptions
             })
         });
 
