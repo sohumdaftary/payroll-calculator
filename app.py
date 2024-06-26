@@ -46,7 +46,7 @@ def calculate_state_income_tax(wages, state, filing_status):
             break
     return state_income_tax
 
-def calculate_federal_income_tax(wages, filing_status, dependents, multiple_jobs, other_income, deductions, extra_withholding, other_tax_credits):
+def calculate_federal_income_tax(wages, filing_status, dependents, multiple_jobs, other_income, deductions, extra_withholding, other_tax_credits, employee_exemptions):
     # Map "Single or Married Filing Separately" to "single"
     if filing_status == "single":
         filing_status = "single"
@@ -110,23 +110,32 @@ def calculate_taxes():
         deductions = float(data.get('deductions', 0.00))
         extra_withholding = float(data.get('extraWithholding', 0.00)) * payPeriods
         other_tax_credits = float(data.get('otherTaxCredits', 0.00))
+        employee_exemptions = data['employeeExemptions']
         
         futa_tax = calculate_futa_tax(wages)
         suta_tax = calculate_suta_tax(wages, state)
         federal_income_tax = calculate_federal_income_tax(wages, filing_status, dependents, multiple_jobs, other_income, deductions, extra_withholding, other_tax_credits)
         state_income_tax = calculate_state_income_tax(wages, state, filing_status)
         
-        # Update Social Security tax calculation
-        social_security_tax = min(wages, SOCIAL_SECURITY_WAGE_BASE) * SOCIAL_SECURITY_RATE
 
-        # Update Medicare tax calculation with additional Medicare tax
-        additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
-
-        if wages > additional_medicare_threshold:
-            medicare_tax = (wages * MEDICARE_RATE) + ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
-        else:
-            medicare_tax = wages * MEDICARE_RATE
+        # Calculate Social Security and Medicare taxes
+        if employee_exemptions == 'none':
         
+            # Update Social Security tax calculation
+            social_security_tax = min(wages, SOCIAL_SECURITY_WAGE_BASE) * SOCIAL_SECURITY_RATE
+
+            # Update Medicare tax calculation with additional Medicare tax
+            additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
+
+            if wages > additional_medicare_threshold:
+                medicare_tax = (wages * MEDICARE_RATE) + ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
+            else:
+                medicare_tax = wages * MEDICARE_RATE
+        
+        else:
+            social_security_tax = 0
+            medicare_tax = 0
+
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
         
