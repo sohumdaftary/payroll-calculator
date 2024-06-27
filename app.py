@@ -129,8 +129,10 @@ def calculate_taxes():
 
             if wages > additional_medicare_threshold:
                 medicare_tax = (wages * MEDICARE_RATE) + ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
+                employer_medicare_tax = medicare_tax - ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
             else:
                 medicare_tax = wages * MEDICARE_RATE
+                employer_medicare_tax = medicare_tax
         
         else:
             social_security_tax = 0
@@ -145,6 +147,7 @@ def calculate_taxes():
             'federal_income_tax': federal_income_tax,
             'social_security_tax': social_security_tax,
             'medicare_tax': medicare_tax,
+            'employer_medicare_tax' : employer_medicare_tax,
             'state_income_tax': state_income_tax,
             'total_employee_taxes': total_employee_taxes,
             'net_income': net_income,
