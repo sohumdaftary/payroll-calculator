@@ -9,6 +9,17 @@ function updateForm() {
     }
 }
 
+function toggleParentFields() {
+    const parentFields = document.getElementById('parentFields');
+    const employeeExemptions = document.getElementById('employeeExemptions').value;
+
+    if (employeeExemptions === 'parent') {
+        parentFields.style.display = 'block';
+    } else {
+        parentFields.style.display = 'none';
+    }
+}
+
 async function calculatePayroll() {
     try {
         const paymentType = document.getElementById('paymentType').value;
