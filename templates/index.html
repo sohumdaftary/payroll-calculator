@@ -71,24 +71,25 @@
                 <div class="pane">
                     <h3>Employee Exemptions</h3>
                     <label for="employeeExemptions">Special Employee Features:</label>
-                    <select id="employeeExemptions" name="employeeExemptions">
-                        <option value="none" selected>None</option>
+                    <select id="employeeExemptions" name="employeeExemptions" onchange="toggleParentFields()">
+                        <option value="none" selected>None of the above</option>
                         <option value="spouse">Your (employer's) spouse</option>
                         <option value="child">Your child under the age of 21</option>
                         <option value="parent">Your parent</option>
                         <option value="under_18">Under the age of 18</option>
                     </select>
-                </div>
-                <!-- New Container for Parent-specific Checkboxes -->
-                <div id="parentFields" style="display: none; margin-top: 10px;">
-                    <label>
-                        <input type="checkbox" id="parentCaresForChild" name="parentCaresForChild">
-                        Parent cares for your child who is either under 18 or has a physical/mental condition
-                    </label>
-                    <label>
-                        <input type="checkbox" id="parentMaritalStatus" name="parentMaritalStatus">
-                        Your marital status is divorced (not remarried), widow(er), living with spouse physically/mentally incapable of caring for child
-                    </label>
+
+                    <!-- New Container for Parent-specific Checkboxes -->
+                    <div id="parentFields" style="display: none; margin-top: 10px;">
+                        <label>
+                            <input type="checkbox" id="parentCaresForChild" name="parentCaresForChild">
+                            Parent cares for your child who is either under 18 or has a physical/mental condition
+                        </label>
+                        <label>
+                            <input type="checkbox" id="parentMaritalStatus" name="parentMaritalStatus">
+                            Your marital status is divorced (not remarried), widow(er), living with spouse physically/mentally incapable of caring for child
+                        </label>
+                    </div>
                 </div>
                 <!-- Federal Taxes Pane -->
                 <div class="pane">
