@@ -42,6 +42,10 @@ async function calculatePayroll() {
         const extraWithholding = document.getElementById('extraWithholding').value || 0;
         const otherTaxCredits = document.getElementById('otherTaxCredits').value || 0;
         const employeeExemptions = document.getElementById('employeeExemptions').value;
+        const parentCaresForChild = document.getElementById('parentCaresForChild').checked;
+        const parentMaritalStatus = document.getElementById('parentMaritalStatus').checked;
+        const under18Student = document.getElementById('under18Student').checked;
+        const under18Occupation = document.getElementById('under18Occupation').checked;
 
         let wages;
         if (paymentType === 'salary') {
@@ -81,7 +85,11 @@ async function calculatePayroll() {
                 extraWithholding: parseFloat(extraWithholding),
                 otherTaxCredits: parseFloat(otherTaxCredits), 
                 payPeriods: payPeriods,
-                employeeExemptions: employeeExemptions
+                employeeExemptions: employeeExemptions,
+                parentCaresForChild: parentCaresForChild,
+                parentMaritalStatus: parentMaritalStatus,
+                under18Student: under18Student,
+                under18Occupation: under18Occupation
             })
         });
 

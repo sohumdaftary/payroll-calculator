@@ -111,6 +111,11 @@ def calculate_taxes():
         extra_withholding = float(data.get('extraWithholding', 0.00)) * payPeriods
         other_tax_credits = float(data.get('otherTaxCredits', 0.00))
         employee_exemptions = data['employeeExemptions']
+
+        parent_cares_for_child = data.get('parentCaresForChild', False)
+        parent_marital_status = data.get('parentMaritalStatus', False)
+        under_18_student = data.get('under18Student', False)
+        under_18_occupation = data.get('under18Occupation', False)
         
         futa_tax = calculate_futa_tax(wages)
         suta_tax = calculate_suta_tax(wages, state)
@@ -119,8 +124,16 @@ def calculate_taxes():
         
 
         # Calculate Social Security and Medicare taxes
-        if employee_exemptions == 'none':
+        if (employee_exemptions == 'parent' and not (parent_cares_for_child and parent_marital_status)) or \
+            (employee_exemptions == 'under_18' and not (not under_18_student and under_18_occupation)) or \
+            (employee_exemptions == 'spouse') or \
+            (employee_exemptions == 'child'):
+
+            social_security_tax = 0
+            medicare_tax = 0
+            employer_medicare_tax = medicare_tax
         
+        else:
             # Update Social Security tax calculation
             social_security_tax = min(wages, SOCIAL_SECURITY_WAGE_BASE) * SOCIAL_SECURITY_RATE
 
@@ -133,10 +146,12 @@ def calculate_taxes():
             else:
                 medicare_tax = wages * MEDICARE_RATE
                 employer_medicare_tax = medicare_tax
-        
-        else:
-            social_security_tax = 0
-            medicare_tax = 0
+
+        app.logger.debug(f'Employee Exemptions: {employee_exemptions}')
+        app.logger.debug(f'parent_cares_for_child: {parent_cares_for_child}')
+        app.logger.debug(f'parent_marital_status: {parent_marital_status}')
+        app.logger.debug(f'under_18_student: {under_18_student}')
+        app.logger.debug(f'under_18_occupation: {under_18_occupation}')
 
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
