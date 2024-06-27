@@ -138,12 +138,6 @@ def calculate_taxes():
             social_security_tax = 0
             medicare_tax = 0
 
-        # Print medicare_tax to the console
-        app.logger.debug(f'medicare_tax: {medicare_tax}')
-        app.logger.debug(f'employer_medicare_tax: {employer_medicare_tax}')
-        app.logger.debug(f'addl_threshold: {additional_medicare_threshold}')
-        app.logger.debug(f'addl_rate: {ADDITIONAL_MEDICARE_TAX_RATE}')
-
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
         
