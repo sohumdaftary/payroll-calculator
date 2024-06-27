@@ -9,14 +9,20 @@ function updateForm() {
     }
 }
 
-function toggleParentFields() {
+function toggleExemptionFields() {
     const parentFields = document.getElementById('parentFields');
+    const under18Fields = document.getElementById('under18Fields');
     const employeeExemptions = document.getElementById('employeeExemptions').value;
 
     if (employeeExemptions === 'parent') {
         parentFields.style.display = 'block';
+        under18Fields.style.display = 'none';
+    } else if (employeeExemptions === 'under_18') {
+        under18Fields.style.display = 'block';
+        parentFields.style.display = 'none';
     } else {
         parentFields.style.display = 'none';
+        under18Fields.style.display = 'none';
     }
 }
 

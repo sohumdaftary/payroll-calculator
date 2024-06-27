@@ -58,6 +58,23 @@
             width: calc(100% - 20px - 1.5em);
             margin-left: 5px;
         }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .checkbox-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-bottom: 5px;
+        }
+ 
     </style>
 </head>
 <body>
@@ -67,30 +84,49 @@
     <main>
         <form id="payroll-form">
             <div class="container">
+
                 <!-- Employee Exemptions Pane -->
                 <div class="pane">
                     <h3>Employee Exemptions</h3>
                     <label for="employeeExemptions">Special Employee Features:</label>
-                    <select id="employeeExemptions" name="employeeExemptions" onchange="toggleParentFields()">
+                    <select id="employeeExemptions" name="employeeExemptions" onchange="toggleExemptionFields()">
                         <option value="none" selected>None of the above</option>
                         <option value="spouse">Your (employer's) spouse</option>
                         <option value="child">Your child under the age of 21</option>
                         <option value="parent">Your parent</option>
                         <option value="under_18">Under the age of 18</option>
                     </select>
-
-                    <!-- New Container for Parent-specific Checkboxes -->
-                    <div id="parentFields" style="display: none; margin-top: 10px;">
-                        <label>
+                
+                   <!-- New Container for Parent-specific Checkboxes -->
+                    <div id="parentFields" class="checkbox-group" style="display: none; margin-top: 10px;">
+                        <div class="checkbox-item">
                             <input type="checkbox" id="parentCaresForChild" name="parentCaresForChild">
-                            Parent cares for your child who is either under 18 or has a physical/mental condition
-                        </label>
-                        <label>
+                            <label for="parentCaresForChild">
+                                Parent cares for your child who is either under 18 or has a physical/mental condition
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
                             <input type="checkbox" id="parentMaritalStatus" name="parentMaritalStatus">
-                            Your marital status is divorced (not remarried), widow(er), living with spouse physically/mentally incapable of caring for child
-                        </label>
+                            <label for="parentMaritalStatus">
+                                Your marital status is divorced (not remarried), widow(er), living with spouse physically/mentally incapable of caring for child
+                            </label>
+                        </div>
                     </div>
+
+                    <!-- New Container for Under 18-specific Checkboxes -->
+                    <div id="under18Fields" class="checkbox-group" style="display: none; margin-top: 10px;">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="under18Student" name="under18Student">
+                            <label for="under18Student">Employee is a student</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="under18Occupation" name="under18Occupation">
+                            <label for="under18Occupation">Providing household services is their principal occupation</label>
+                        </div>
+                    </div>
+
                 </div>
+
                 <!-- Federal Taxes Pane -->
                 <div class="pane">
                     <h3>Federal Taxes</h3>
