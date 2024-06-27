@@ -128,8 +128,8 @@ def calculate_taxes():
             additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
 
             if wages > additional_medicare_threshold:
-                medicare_tax = (wages * MEDICARE_RATE) + ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
-                employer_medicare_tax = medicare_tax - ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
+                medicare_tax = (additional_medicare_threshold * MEDICARE_RATE) + ((wages - additional_medicare_threshold) * ADDITIONAL_MEDICARE_TAX_RATE)
+                employer_medicare_tax = additional_medicare_threshold * MEDICARE_RATE
             else:
                 medicare_tax = wages * MEDICARE_RATE
                 employer_medicare_tax = medicare_tax
@@ -137,6 +137,12 @@ def calculate_taxes():
         else:
             social_security_tax = 0
             medicare_tax = 0
+
+        # Print medicare_tax to the console
+        app.logger.debug(f'medicare_tax: {medicare_tax}')
+        app.logger.debug(f'employer_medicare_tax: {employer_medicare_tax}')
+        app.logger.debug(f'addl_threshold: {additional_medicare_threshold}')
+        app.logger.debug(f'addl_rate: {ADDITIONAL_MEDICARE_TAX_RATE}')
 
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
