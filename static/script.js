@@ -46,6 +46,8 @@ async function calculatePayroll() {
         const parentMaritalStatus = document.getElementById('parentMaritalStatus').checked;
         const under18Student = document.getElementById('under18Student').checked;
         const under18Occupation = document.getElementById('under18Occupation').checked;
+        const pay2700 = document.getElementById('pay2700').checked;
+        const pay1000 = document.getElementById('pay1000').checked;
 
         let wages;
         if (paymentType === 'salary') {
@@ -89,7 +91,9 @@ async function calculatePayroll() {
                 parentCaresForChild: parentCaresForChild,
                 parentMaritalStatus: parentMaritalStatus,
                 under18Student: under18Student,
-                under18Occupation: under18Occupation
+                under18Occupation: under18Occupation,
+                pay2700: pay2700,
+                pay1000: pay1000
             })
         });
 
