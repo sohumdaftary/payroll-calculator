@@ -25,12 +25,6 @@ def calculate_futa_tax(wages, state):
     taxable_wages = min(wages, FUTA_WAGE_BASE)
     credit_reduction_value = CREDIT_REDUCTION.get(state, 0)
     net_futa_tax = taxable_wages * (FUTA_RATE - STD_STATE_CREDIT + credit_reduction_value)
-    
-    app.logger.debug(f"Taxable Wages: {taxable_wages}")
-    app.logger.debug(f"Standard State Credit: {STD_STATE_CREDIT}")
-    app.logger.debug(f"Credit Reduction for state {state}: {credit_reduction_value}")
-    app.logger.debug(f"Net FUTA Tax: {net_futa_tax}")
-    
     return max(net_futa_tax, 0)  # Ensure FUTA tax is not negative  
 
 def calculate_suta_tax(wages, state):
@@ -126,7 +120,7 @@ def calculate_taxes():
         under_18_student = data.get('under18Student', False)
         under_18_occupation = data.get('under18Occupation', False)
         
-        futa_tax = calculate_futa_tax(wages)
+        futa_tax = calculate_futa_tax(wages, state)
         suta_tax = calculate_suta_tax(wages, state)
         federal_income_tax = calculate_federal_income_tax(wages, filing_status, dependents, multiple_jobs, other_income, deductions, extra_withholding, other_tax_credits)
         state_income_tax = calculate_state_income_tax(wages, state, filing_status)
@@ -160,7 +154,7 @@ def calculate_taxes():
         if not pay1000 or employee_exemptions in ['spouse', 'parent', 'child']:
             futa_tax = 0
         else:
-            futa_tax = calculate_futa_tax(wages)
+            futa_tax = calculate_futa_tax(wages, state)
 
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
