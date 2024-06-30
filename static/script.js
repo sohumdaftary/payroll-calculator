@@ -118,7 +118,7 @@ async function calculatePayroll() {
 
         let periodFutaTax = data.futa_tax / payPeriods;
         let periodSutaTax = data.suta_tax / payPeriods;
-        let periodEmployerSocialSecurityTax = data.social_security_tax / payPeriods;
+        let periodEmployerSocialSecurityTax = data.employer_social_security_tax / payPeriods;
         let periodEmployerMedicareTax = data.employer_medicare_tax / payPeriods;
         let periodEmployerTotalFicaTaxes = periodEmployerSocialSecurityTax + periodEmployerMedicareTax;
         let periodEmployerTotalFutaSutaTaxes = periodFutaTax + periodSutaTax;

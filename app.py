@@ -100,6 +100,7 @@ def calculate_taxes():
         payPeriods = float(data['payPeriods'])
         state = data['state']
         filing_status = data['filing_status']
+        cover_fica_taxes = data.get('coverFicaTaxes', False)
         dependents = {
             'has_dependents': data.get('dependents'),
             'qualifying_children': int(data.get('qualifyingChildren', 0)),
@@ -138,10 +139,7 @@ def calculate_taxes():
             employer_medicare_tax = medicare_tax
         
         else:
-            # Update Social Security tax calculation
             social_security_tax = min(wages, SOCIAL_SECURITY_WAGE_BASE) * SOCIAL_SECURITY_RATE
-
-            # Update Medicare tax calculation with additional Medicare tax
             additional_medicare_threshold = ADDITIONAL_MEDICARE_TAX_THRESHOLDS[filing_status]
 
             if wages > additional_medicare_threshold:
@@ -151,21 +149,32 @@ def calculate_taxes():
                 medicare_tax = wages * MEDICARE_RATE
                 employer_medicare_tax = medicare_tax
 
+        # If covering FICA taxes, increase wages by the FICA taxes and adjust employer costs
+        if cover_fica_taxes:
+            wages += (social_security_tax + medicare_tax)
+            employer_social_security_tax = 2 * social_security_tax
+            employer_medicare_tax += medicare_tax
+            social_security_tax = 0
+            medicare_tax = 0
+        else:
+            employer_social_security_tax = social_security_tax
+
         if not pay1000 or employee_exemptions in ['spouse', 'parent', 'child']:
             futa_tax = 0
         else:
-            futa_tax = calculate_futa_tax(wages, state)
+            futa_tax = calculate_futa_tax(float(data['wages']), state)
 
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
         
-        total_employer_taxes = futa_tax + suta_tax + social_security_tax + medicare_tax
+        total_employer_taxes = futa_tax + suta_tax + employer_social_security_tax + employer_medicare_tax
         
         return jsonify({
             'federal_income_tax': federal_income_tax,
             'social_security_tax': social_security_tax,
             'medicare_tax': medicare_tax,
             'employer_medicare_tax' : employer_medicare_tax,
+            'employer_social_security_tax': employer_social_security_tax,
             'state_income_tax': state_income_tax,
             'total_employee_taxes': total_employee_taxes,
             'net_income': net_income,
