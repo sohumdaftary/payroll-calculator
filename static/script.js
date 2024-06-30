@@ -48,6 +48,7 @@ async function calculatePayroll() {
         const under18Occupation = document.getElementById('under18Occupation').checked;
         const pay2700 = document.getElementById('pay2700').checked;
         const pay1000 = document.getElementById('pay1000').checked;
+        const coverFicaTaxes = document.getElementById('coverFicaTaxes').checked;
 
         let wages;
         if (paymentType === 'salary') {
@@ -93,7 +94,8 @@ async function calculatePayroll() {
                 under18Student: under18Student,
                 under18Occupation: under18Occupation,
                 pay2700: pay2700,
-                pay1000: pay1000
+                pay1000: pay1000, 
+                coverFicaTaxes: coverFicaTaxes
             })
         });
 
