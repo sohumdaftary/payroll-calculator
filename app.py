@@ -12,19 +12,26 @@ from tax_tables import (
     SUTA_RATES,
     SOCIAL_SECURITY_WAGE_BASE,
     ADDITIONAL_MEDICARE_TAX_RATE,
-    ADDITIONAL_MEDICARE_TAX_THRESHOLDS
+    ADDITIONAL_MEDICARE_TAX_THRESHOLDS,
+    STD_STATE_CREDIT,
+    CREDIT_REDUCTION
 )
 
 app = Flask(__name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
-def calculate_futa_tax(wages):
+def calculate_futa_tax(wages, state):
     taxable_wages = min(wages, FUTA_WAGE_BASE)
-    gross_futa_tax = taxable_wages * FUTA_RATE
-    state_credit = taxable_wages * 0.054  # Uniform state credit rate
-    net_futa_tax = gross_futa_tax - state_credit
-    return max(net_futa_tax, 0)  # Ensure FUTA tax is not negative
+    credit_reduction_value = CREDIT_REDUCTION.get(state, 0)
+    net_futa_tax = taxable_wages * (FUTA_RATE - STD_STATE_CREDIT + credit_reduction_value)
+    
+    app.logger.debug(f"Taxable Wages: {taxable_wages}")
+    app.logger.debug(f"Standard State Credit: {STD_STATE_CREDIT}")
+    app.logger.debug(f"Credit Reduction for state {state}: {credit_reduction_value}")
+    app.logger.debug(f"Net FUTA Tax: {net_futa_tax}")
+    
+    return max(net_futa_tax, 0)  # Ensure FUTA tax is not negative  
 
 def calculate_suta_tax(wages, state):
     suta_rate = SUTA_RATES[state]

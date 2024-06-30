@@ -60,7 +60,7 @@ SOCIAL_SECURITY_RATE = 0.062  # 6.2%
 MEDICARE_RATE = 0.0145  # 1.45%
 FUTA_RATE = 0.06  # 6.0%
 FUTA_WAGE_BASE = 7000
-SUTA_RATE = 0.054  # Placeholder, replaced with actual rates in suta_rates.py
+STD_STATE_CREDIT = 0.054 
 
 # Standard deductions and tax brackets for all states
 STATE_TAX_INFO = {
@@ -1251,7 +1251,12 @@ STATE_TAX_INFO = {
     }
 }
 
-# suta_rates.py
+# Credit reduction by CR state (2024)
+CREDIT_REDUCTION = {
+    "CA": 0.009,
+    "CT": 0.009,
+    "NY": 0.009
+}
 
 # SUTA rates for all 50 states
 SUTA_RATES = {
