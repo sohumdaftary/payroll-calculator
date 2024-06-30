@@ -111,6 +111,8 @@ def calculate_taxes():
         extra_withholding = float(data.get('extraWithholding', 0.00)) * payPeriods
         other_tax_credits = float(data.get('otherTaxCredits', 0.00))
         employee_exemptions = data['employeeExemptions']
+        pay2700 = data.get('pay2700', True)
+        pay1000 = data.get('pay1000', True)
 
         parent_cares_for_child = data.get('parentCaresForChild', False)
         parent_marital_status = data.get('parentMaritalStatus', False)
@@ -127,7 +129,8 @@ def calculate_taxes():
         if (employee_exemptions == 'parent' and not (parent_cares_for_child and parent_marital_status)) or \
             (employee_exemptions == 'under_18' and not (not under_18_student and under_18_occupation)) or \
             (employee_exemptions == 'spouse') or \
-            (employee_exemptions == 'child'):
+            (employee_exemptions == 'child') or \
+            not pay2700:
 
             social_security_tax = 0
             medicare_tax = 0
@@ -147,11 +150,10 @@ def calculate_taxes():
                 medicare_tax = wages * MEDICARE_RATE
                 employer_medicare_tax = medicare_tax
 
-        app.logger.debug(f'Employee Exemptions: {employee_exemptions}')
-        app.logger.debug(f'parent_cares_for_child: {parent_cares_for_child}')
-        app.logger.debug(f'parent_marital_status: {parent_marital_status}')
-        app.logger.debug(f'under_18_student: {under_18_student}')
-        app.logger.debug(f'under_18_occupation: {under_18_occupation}')
+        if not pay1000 or employee_exemptions in ['spouse', 'parent', 'child']:
+            futa_tax = 0
+        else:
+            futa_tax = calculate_futa_tax(wages)
 
         total_employee_taxes = federal_income_tax + social_security_tax + medicare_tax + state_income_tax
         net_income = wages - total_employee_taxes
